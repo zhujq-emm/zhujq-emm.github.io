@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="高级技术,mysql,mysql优化," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="xxx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql中explain的详细解释">
+<meta property="og:url" content="http://example.com/2020/12/07/mysql%E4%B8%ADexplain%E7%9A%84%E8%AF%A6%E7%BB%86%E8%A7%A3%E9%87%8A/index.html">
+<meta property="og:site_name" content="zjqの博客">
+<meta property="og:description" content="xxx">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/image/mysql%E4%B8%ADexplain%E7%9A%84%E8%AF%A6%E7%BB%86%E8%A7%A3%E9%87%8A/explain.JPG">
+<meta property="article:published_time" content="2020-12-07T12:35:37.000Z">
+<meta property="article:modified_time" content="2021-12-12T05:29:53.918Z">
+<meta property="article:author" content="朱佳祺">
+<meta property="article:tag" content="高级技术">
+<meta property="article:tag" content="mysql">
+<meta property="article:tag" content="mysql优化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/image/mysql%E4%B8%ADexplain%E7%9A%84%E8%AF%A6%E7%BB%86%E8%A7%A3%E9%87%8A/explain.JPG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://example.com/2020/12/07/mysql中explain的详细解释/"/>
+
+
+
+
+
+  <title>mysql中explain的详细解释 | zjqの博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zjqの博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">zjq</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/07/mysql%E4%B8%ADexplain%E7%9A%84%E8%AF%A6%E7%BB%86%E8%A7%A3%E9%87%8A/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zjqの博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">mysql中explain的详细解释</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-12-07T20:35:37+08:00">
+                2020-12-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  xxx
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="什么是-explain"><a href="#什么是-explain" class="headerlink" title="什么是 explain?"></a>什么是 explain?</h3><p>需要知道该 SQL 的执行计划，比如是全表扫描，还是索引扫描，这些都需要通过<br>EXPLAIN 去完成。EXPLAIN 命令是查看优化器如何决定执行查询的主要方法。<br>8.10.2 explain 命令详解</p>
+<p><img src="/image/mysql%E4%B8%ADexplain%E7%9A%84%E8%AF%A6%E7%BB%86%E8%A7%A3%E9%87%8A/explain.JPG" alt="explain图解"></p>
+<h5 id="1-id"><a href="#1-id" class="headerlink" title="1.id"></a>1.id</h5><p>包含一组数字，表示查询中执行 select 子句或操作表的顺序（第一个 select 是 1，<br>子查询是 2.子子查询是 3.依次类推）</p>
+<h5 id="2-select-type"><a href="#2-select-type" class="headerlink" title="2.select_type"></a>2.select_type</h5><p>示查询中每个 select 子句的类型（简单 OR 复杂）<br>a. SIMPLE：查询中不包含子查询或者 UNION<br>b. 查询中若包含任何复杂的子部分，最外层查询则被标记为：PRIMARY<br>c. 在 SELECT 或 WHERE 列表中包含了子查询，该子查询被标记为：SUBQUERY<br>d. 在 FROM 列表中包含的子查询被标记为：DERIVED（衍生）用来表示包含在 from<br>子句中的子查询的 select，mysql 会递归执行并将结果放到一个临时表中。服务器内部<br>称为”派生表”，因为该临时表是从子查询中派生出来的<br>e. 若第二个 SELECT 出现在 UNION 之后，则被标记为 UNION；若 UNION 包含在<br>FROM 子句的子查询中，外层 SELECT 将被标记为：DERIVED<br>f. 从 UNION 表获取结果的 SELECT 被标记为：UNION RESULT<br>SUBQUERY 和 UNION 还可以被标记为 DEPENDENT 和 UNCACHEABLE。<br>DEPENDENT 意味着 select 依赖于外层查询中发现的数据。<br>UNCACHEABLE 意味着 select 中的某些 特性阻止结果被缓存于一个 item_cache 中。</p>
+<h5 id="3-type"><a href="#3-type" class="headerlink" title="3.type"></a>3.type</h5><p>表示 MySQL 在表中找到所需行的方式，又称“访问类型”，常见类型如下:<br>ALL, index, range, ref, eq_ref, const, system, NULL（全局遍历啦，还是索引查询等）</p>
+<h5 id="4-possible-keys"><a href="#4-possible-keys" class="headerlink" title="4.possible_keys"></a>4.possible_keys</h5><p>指出 MySQL 能使用哪个索引在表中找到记录，查询涉及到的字段上若存在索引，则该<br>索引将被列出，但不一定被查询使用（表中的某一列上有多个索引都和这个有关系，索<br>引建立在这个字段上了，那么都列出来）</p>
+<h5 id="5-key"><a href="#5-key" class="headerlink" title="5.key"></a>5.key</h5><p>显示 MySQL 在查询中实际使用的索引，若没有使用索引，显示为 NULL</p>
+<h5 id="6-key-len"><a href="#6-key-len" class="headerlink" title="6.key_len"></a>6.key_len</h5><p>表示索引中使用的字节数，可通过该列计算查询中使用的索引的长度</p>
+<h5 id="7-ref"><a href="#7-ref" class="headerlink" title="7.ref"></a>7.ref</h5><p>表示上述表的连接匹配条件，即哪些列或常量被用于查找索引列上的值</p>
+<h5 id="8-rows"><a href="#8-rows" class="headerlink" title="8.rows"></a>8.rows</h5><p> 表示 MySQL 根据表统计信息及索引选用情况，估算的找到所需的记录所需要读取的行数</p>
+<h5 id="9-Extra"><a href="#9-Extra" class="headerlink" title="9.Extra"></a>9.Extra</h5><p> 包含不适合在其他列中显示但十分重要的额外信息</p>
+<h5 id="10-table-Select"><a href="#10-table-Select" class="headerlink" title="10.table Select"></a>10.table Select</h5><p>查询的表的名</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/gomysql/p/3720123.html">https://www.cnblogs.com/gomysql/p/3720123.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E9%AB%98%E7%BA%A7%E6%8A%80%E6%9C%AF/" rel="tag"># 高级技术</a>
+          
+            <a href="/tags/mysql/" rel="tag"># mysql</a>
+          
+            <a href="/tags/mysql%E4%BC%98%E5%8C%96/" rel="tag"># mysql优化</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/12/07/SpringBoot%20/" rel="next" title="SpringBoot">
+                <i class="fa fa-chevron-left"></i> SpringBoot
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/04/07/MyBatis/" rel="prev" title="MyBatis">
+                MyBatis <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-explain"><span class="nav-number">1.</span> <span class="nav-text">什么是 explain?</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-id"><span class="nav-number">1.0.1.</span> <span class="nav-text">1.id</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-select-type"><span class="nav-number">1.0.2.</span> <span class="nav-text">2.select_type</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-type"><span class="nav-number">1.0.3.</span> <span class="nav-text">3.type</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-possible-keys"><span class="nav-number">1.0.4.</span> <span class="nav-text">4.possible_keys</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-key"><span class="nav-number">1.0.5.</span> <span class="nav-text">5.key</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-key-len"><span class="nav-number">1.0.6.</span> <span class="nav-text">6.key_len</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-ref"><span class="nav-number">1.0.7.</span> <span class="nav-text">7.ref</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#8-rows"><span class="nav-number">1.0.8.</span> <span class="nav-text">8.rows</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#9-Extra"><span class="nav-number">1.0.9.</span> <span class="nav-text">9.Extra</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#10-table-Select"><span class="nav-number">1.0.10.</span> <span class="nav-text">10.table Select</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱佳祺</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

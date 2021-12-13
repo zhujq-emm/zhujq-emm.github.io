@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="mybatis,高级技术," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="xxx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MyBatis">
+<meta property="og:url" content="http://example.com/2021/04/07/MyBatis/index.html">
+<meta property="og:site_name" content="zjqの博客">
+<meta property="og:description" content="xxx">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/image/MyBatis/%E7%BC%93%E5%AD%98-16393737590031.JPG">
+<meta property="og:image" content="http://example.com/image/MyBatis/%E7%BC%93%E5%AD%982.JPG">
+<meta property="og:image" content="http://example.com/image/MyBatis/%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98.JPG">
+<meta property="og:image" content="http://example.com/image/MyBatis/mybaits%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F.JPG">
+<meta property="article:published_time" content="2021-04-07T12:35:37.000Z">
+<meta property="article:modified_time" content="2021-12-13T05:36:02.894Z">
+<meta property="article:author" content="朱佳祺">
+<meta property="article:tag" content="mybatis">
+<meta property="article:tag" content="高级技术">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/image/MyBatis/%E7%BC%93%E5%AD%98-16393737590031.JPG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://example.com/2021/04/07/MyBatis/"/>
+
+
+
+
+
+  <title>MyBatis | zjqの博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zjqの博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">zjq</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/07/MyBatis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zjqの博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MyBatis</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-04-07T20:35:37+08:00">
+                2021-04-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  xxx
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="什么是MyBatis"><a href="#什么是MyBatis" class="headerlink" title="什么是MyBatis"></a>什么是MyBatis</h2><p> （1）Mybatis是一个半ORM（对象关系映射）框架，它内部封装了JDBC，开发时只需要关注SQL 语句本身，不需要花费精力去处理加载驱动、创建连接、创建statement等繁杂的过程。程序员直 接编写原生态sql，可以严格控制sql执行性能，灵活度高。 </p>
+<p>（2）MyBatis 可以使用 XML 或注解来配置和映射原生信息，将 POJO映射成数据库中的记录，避 免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集。</p>
+<p>（3）通过xml 文件或注解的方式将要执行的各种 statement 配置起来，并通过java对象和 statement中sql的动态参数进行映射生成最终执行的sql语句，最后由mybatis框架执行sql并将结果 映射为java对象并返回。（从执行sql到返回result的过程）。 </p>
+<h2 id="说说MyBatis的优点和缺点-优点："><a href="#说说MyBatis的优点和缺点-优点：" class="headerlink" title="说说MyBatis的优点和缺点 优点："></a>说说MyBatis的优点和缺点 优点：</h2><p> （1）基于SQL语句编程，相当灵活，不会对应用程序或者数据库的现有设计造成任何影响，SQL写 在XML里，解除sql与程序代码的耦合，便于统一管理；提供XML标签，支持编写动态SQL语句，并 可重用。 （2）与JDBC相比，减少了50%以上的代码量，消除了JDBC大量冗余的代码，不需要手动开关连 接； （3）很好的与各种数据库兼容（因为MyBatis使用JDBC来连接数据库，所以只要JDBC支持的数据 库MyBatis都支持）。 </p>
+<p>（4）能够与Spring很好的集成； </p>
+<p>（5）提供映射标签，支持对象与数据库的ORM字段关系映射；提供对象关系映射标签，支持对象 关系组件维护。 </p>
+<p>缺点 </p>
+<p>（1）SQL语句的编写工作量较大，尤其当字段多、关联表多时，对开发人员编写SQL语句的功底有 一定要求。 </p>
+<p>（2）SQL语句依赖于数据库，导致数据库移植性差，不能随意更换数据库。</p>
+<h1 id="和-的区别是什么？"><a href="#和-的区别是什么？" class="headerlink" title="#{}和${}的区别是什么？"></a>#{}和${}的区别是什么？</h1><p> #{}是预编译处理，${}是字符串替换。</p>
+<p> Mybatis在处理#{}时，会将sql中的#{}替换为?号，调用PreparedStatement的set方法来赋值；</p>
+<p> Mybatis在处理${}时，就是把${}替换成变量的值。 使用#{}可以有效的防止SQL注入，提高系统安全性。 </p>
+<h2 id="当实体类中的属性名和表中的字段名不一样-，怎么办-？"><a href="#当实体类中的属性名和表中的字段名不一样-，怎么办-？" class="headerlink" title="当实体类中的属性名和表中的字段名不一样 ，怎么办 ？"></a>当实体类中的属性名和表中的字段名不一样 ，怎么办 ？</h2><p> 第1种： 通过在查询的sql语句中定义字段名的别名，让字段名的别名和实体类的属性名一致。  select order_id id, order_no orderno ,order_price price form orders where order_id=#{id};  第2种： 通过来映射字段名和实体类属性名的一一对应的关系。  select * from orders where order_id=#{id}     </p>
+<h1 id="Mybatis是如何进行分页的？分页插件的原理是什么？"><a href="#Mybatis是如何进行分页的？分页插件的原理是什么？" class="headerlink" title="# Mybatis是如何进行分页的？分页插件的原理是什么？"></a># Mybatis是如何进行分页的？分页插件的原理是什么？</h1><p>Mybatis使用RowBounds对象进行分页，它是针对ResultSet结果集执行的内存分页，而非物理分 页。</p>
+<p>可以在sql内直接拼写带有物理分页的参数来完成物理分页功能，也可以使用分页插件来完成物 理分页，比如：MySQL数据的时候，在原有SQL后面拼写limit。</p>
+<p> 分页插件的基本原理是使用Mybatis提供的插件接口，实现自定义插件，在插件的拦截方法内拦截 待执行的sql，然后重写sql，根据dialect方言，添加对应的物理分页语句和物理分页参数。</p>
+<h2 id="Mybatis是如何将sql执行结果封装为目标对象并返回的？都有-哪些映射形式？"><a href="#Mybatis是如何将sql执行结果封装为目标对象并返回的？都有-哪些映射形式？" class="headerlink" title="Mybatis是如何将sql执行结果封装为目标对象并返回的？都有 哪些映射形式？"></a>Mybatis是如何将sql执行结果封装为目标对象并返回的？都有 哪些映射形式？</h2><p>第一种是使用标签，逐一定义数据库列名和对象属性名之间的映射关系。 第二种是使用sql列的别名功能，将列的别名书写为对象属性名。</p>
+<p> 有了列名与属性名的映射关系后，Mybatis通过反射创建对象，同时使用反射给对象的属性逐一赋 值并返回，那些找不到映射关系的属性，是无法完成赋值的.</p>
+<h2 id="如何执行批量插入？"><a href="#如何执行批量插入？" class="headerlink" title="如何执行批量插入？"></a>如何执行批量插入？</h2><p> 首先,创建一个简单的insert语句:</p>
+ <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">”insertname”</span>&gt;</span></span><br><span class="line">insert into names (name) values (#&#123;value&#125;)</span><br><span class="line"><span class="tag">&lt;/<span class="name">insert</span>&gt;</span> </span><br></pre></td></tr></table></figure>
+
+<p> 然后在java代码中像下面这样执行批处理插入:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">list&lt;string&gt; names = <span class="keyword">new</span> arraylist();</span><br><span class="line"> names.add(“fred”);</span><br><span class="line"> names.add(“barney”);</span><br><span class="line"> names.add(“betty”);</span><br><span class="line"> names.add(“wilma”);</span><br><span class="line"> 	<span class="comment">// 注意这里 executortype.batch</span></span><br><span class="line"> 	sqlsession sqlsession = sqlsessionfactory.opensession(executortype.batch);</span><br><span class="line"> <span class="keyword">try</span> &#123;</span><br><span class="line"> 	namemapper mapper = sqlsession.getmapper(namemapper.class);</span><br><span class="line"> <span class="keyword">for</span> (string name : names) &#123;</span><br><span class="line"> mapper.insertname(name);</span><br><span class="line"> &#125;</span><br><span class="line"> 	sqlsession.commit();</span><br><span class="line"> &#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line"> 	e.printStackTrace();</span><br><span class="line"> 	sqlSession.rollback(); </span><br><span class="line"> 	<span class="keyword">throw</span> e; </span><br><span class="line"> &#125;</span><br><span class="line"> <span class="keyword">finally</span> &#123;</span><br><span class="line"> 	sqlsession.close();</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Xml映射文件中，除了常见的select-insert-updae-delete-标签之外，还有哪些标签？"><a href="#Xml映射文件中，除了常见的select-insert-updae-delete-标签之外，还有哪些标签？" class="headerlink" title="Xml映射文件中，除了常见的select|insert|updae|delete 标签之外，还有哪些标签？"></a>Xml映射文件中，除了常见的select|insert|updae|delete 标签之外，还有哪些标签？</h2><p> 加上动态sql的9个标签，其中为sql片段标签，通过标签引入sql片段，为不支持自增的主键生成策 略标签。 </p>
+<h2 id="MyBatis实现一对一有几种方式-具体怎么操作的？"><a href="#MyBatis实现一对一有几种方式-具体怎么操作的？" class="headerlink" title="MyBatis实现一对一有几种方式?具体怎么操作的？"></a>MyBatis实现一对一有几种方式?具体怎么操作的？</h2><p> 有联合查询和嵌套查询,联合查询是几个表联合查询,只查询一次, 通过在resultMap里面配置 association节点配置一对一的类就可以完成；</p>
+<p> 嵌套查询是先查一个表，根据这个表里面的结果的 外键id，去再另外一个表里面查询数据,也是通过 association配置，但另外一个表的查询通过select属性配置。</p>
+<h2 id="Mybatis是否支持延迟加载？如果支持，它的实现原理是什-么？"><a href="#Mybatis是否支持延迟加载？如果支持，它的实现原理是什-么？" class="headerlink" title="Mybatis是否支持延迟加载？如果支持，它的实现原理是什 么？"></a>Mybatis是否支持延迟加载？如果支持，它的实现原理是什 么？</h2><p>Mybatis仅支持association关联对象和collection关联集合对象的延迟加载，association指的就是一 对一，collection指的就是一对多查询。</p>
+<p>在Mybatis配置文件中，可以配置是否启用延迟加载 lazyLoadingEnabled=true|false。</p>
+<p> 它的原理是，使用CGLIB创建目标对象的代理对象，当调用目标方法时，进入拦截器方法，比如调 用a.getB().getName()，拦截器invoke()方法发现a.getB()是null值，那么就会单独发送事先保存好的 查询关联B对象的sql，把B查询上来，然后调用a.setB(b)，于是a的对象b属性就有值了，接着完成 a.getB().getName()方法的调用。</p>
+<p>这就是延迟加载的基本原理。 当然了，不光是Mybatis，几乎所有的包括Hibernate，支持延迟加载的原理都是一样的。</p>
+<h2 id="说说Mybatis的缓存机制"><a href="#说说Mybatis的缓存机制" class="headerlink" title="说说Mybatis的缓存机制:"></a>说说Mybatis的缓存机制:</h2><p> Mybatis整体：</p>
+<p><img src="/image/MyBatis/%E7%BC%93%E5%AD%98-16393737590031.JPG" alt="缓存"></p>
+<p> 一级缓存localCache 在应用运行过程中，我们有可能在一次数据库会话中，执行多次查询条件完全相同的 SQL， MyBatis 提供了一级缓存的方案优化这部分场景，如果是相同的 SQL 语句，会优先命中一级缓存， 避免直接对数据库进行查询，提高性能。</p>
+<p> 每个 SqlSession 中持有了 Executor，每个 Executor 中有一个 LocalCache。当用户发起查询时， MyBatis 根据当前执行的语句生成 MappedStatement，在 Local Cache 进行查询，如果缓存命中 的话，直接返回结果给用户，如果缓存没有命中的话，查询数据库，结果写入 Local Cache，最后 返回结果给用户。具体实现类的类关系图如下图所示：</p>
+<p><img src="/image/MyBatis/%E7%BC%93%E5%AD%982.JPG" alt="缓存2"></p>
+<p>1.MyBatis 一级缓存的生命周期和 SqlSession 一致。</p>
+<p>2.MyBatis 一级缓存内部设计简单，只是一个没有容量限定的 HashMap，在缓存的功能性上有 所欠缺。</p>
+<p>3.MyBatis 的一级缓存最大范围是 SqlSession 内部，有多个 SqlSession 或者分布式的环境下， 数据库写操作会引起脏数据，建议设定缓存级别为 Statement。 二级缓存 在上文中提到的一级缓存中，其最大的共享范围就是一个 SqlSession 内部，如果多个 SqlSession 之间需要共享缓存，则需要使用到二级缓存。开启二级缓存后，会使用 CachingExecutor 装饰 Executor，进入一级缓存的查询流程前，先在 CachingExecutor 进行二级缓存的查询，具体的工作 流程如下所示。</p>
+<p><img src="/image/MyBatis/%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98.JPG" alt="二级缓存"></p>
+<p> 二级缓存开启后，同一个 namespace 下的所有操作语句，都影响着同一个 Cache，即二级缓存被 多个 SqlSession 共享，是一个全局的变量。 当开启缓存后，数据的查询执行的流程为：</p>
+<p> 二级缓存 -&gt; 一级缓存 -&gt; 数据库 </p>
+<p>1.MyBatis 的二级缓存相对于一级缓存来说，实现了 SqlSession 之间缓存数据的共享，同时粒度 更加细，能够到 namespace 级别，通过 Cache 接口实现类不同的组合，对 Cache 的可控性 也更强。</p>
+<p>2.MyBatis 在多表查询时，极大可能会出现脏数据，有设计上的缺陷，安全使用二级缓存的条件 比较苛刻。</p>
+<p>3.在分布式环境下，由于默认的 MyBatis Cache 实现都是基于本地的，分布式环境下必然会出现 读取到脏数据，需要使用集中式缓存将 MyBatis 的 Cache 接口实现，有一定的开发成本，直 接使用 Redis、Memcached 等分布式缓存可能成本更低，安全性也更高。</p>
+<h2 id="JDBC-编程有哪些步骤？"><a href="#JDBC-编程有哪些步骤？" class="headerlink" title="JDBC 编程有哪些步骤？"></a>JDBC 编程有哪些步骤？</h2><p>1.装载相应的数据库的 JDBC 驱动并进行初始化：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class.forName(<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p> 2.建立 JDBC 和数据库之间的 Connection 连接： </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class.forName(<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span>); </span><br><span class="line">Connection c = DriverManager.getConnection(<span class="string">&quot;jdbc:mysql://127.0.0.1:3306/test? characterEncoding=UTF-8&quot;</span>, <span class="string">&quot;root&quot;</span>, <span class="string">&quot;123456&quot;</span>); </span><br></pre></td></tr></table></figure>
+
+
+
+<p>3.创建 Statement 或者 PreparedStatement 接口，执行 SQL 语句。</p>
+<p> 4.处理和显示结果。</p>
+<p> 5.释放资源。 </p>
+<h2 id="MyBatis-中见过什么设计模式？"><a href="#MyBatis-中见过什么设计模式？" class="headerlink" title="MyBatis 中见过什么设计模式？"></a>MyBatis 中见过什么设计模式？</h2><p><img src="/image/MyBatis/mybaits%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F.JPG" alt="mybaits设计模式"></p>
+<h2 id="MyBatis-中比如-UserMapper-java-是接口，为什么没有实-现类还能调用？"><a href="#MyBatis-中比如-UserMapper-java-是接口，为什么没有实-现类还能调用？" class="headerlink" title="MyBatis 中比如 UserMapper.java 是接口，为什么没有实 现类还能调用？"></a>MyBatis 中比如 UserMapper.java 是接口，为什么没有实 现类还能调用？</h2><p> 使用JDK动态代理+MapperProxy。本质上调用的是MapperProxy的invoke方法。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/mybatis/" rel="tag"># mybatis</a>
+          
+            <a href="/tags/%E9%AB%98%E7%BA%A7%E6%8A%80%E6%9C%AF/" rel="tag"># 高级技术</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/12/07/mysql%E4%B8%ADexplain%E7%9A%84%E8%AF%A6%E7%BB%86%E8%A7%A3%E9%87%8A/" rel="next" title="mysql中explain的详细解释">
+                <i class="fa fa-chevron-left"></i> mysql中explain的详细解释
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/05/07/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/" rel="prev" title="加密算法">
+                加密算法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFMyBatis"><span class="nav-number">1.</span> <span class="nav-text">什么是MyBatis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E8%AF%B4MyBatis%E7%9A%84%E4%BC%98%E7%82%B9%E5%92%8C%E7%BC%BA%E7%82%B9-%E4%BC%98%E7%82%B9%EF%BC%9A"><span class="nav-number">2.</span> <span class="nav-text">说说MyBatis的优点和缺点 优点：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%92%8C-%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number"></span> <span class="nav-text">#{}和${}的区别是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BD%93%E5%AE%9E%E4%BD%93%E7%B1%BB%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E5%90%8D%E5%92%8C%E8%A1%A8%E4%B8%AD%E7%9A%84%E5%AD%97%E6%AE%B5%E5%90%8D%E4%B8%8D%E4%B8%80%E6%A0%B7-%EF%BC%8C%E6%80%8E%E4%B9%88%E5%8A%9E-%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">当实体类中的属性名和表中的字段名不一样 ，怎么办 ？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mybatis%E6%98%AF%E5%A6%82%E4%BD%95%E8%BF%9B%E8%A1%8C%E5%88%86%E9%A1%B5%E7%9A%84%EF%BC%9F%E5%88%86%E9%A1%B5%E6%8F%92%E4%BB%B6%E7%9A%84%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number"></span> <span class="nav-text"># Mybatis是如何进行分页的？分页插件的原理是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Mybatis%E6%98%AF%E5%A6%82%E4%BD%95%E5%B0%86sql%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C%E5%B0%81%E8%A3%85%E4%B8%BA%E7%9B%AE%E6%A0%87%E5%AF%B9%E8%B1%A1%E5%B9%B6%E8%BF%94%E5%9B%9E%E7%9A%84%EF%BC%9F%E9%83%BD%E6%9C%89-%E5%93%AA%E4%BA%9B%E6%98%A0%E5%B0%84%E5%BD%A2%E5%BC%8F%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">Mybatis是如何将sql执行结果封装为目标对象并返回的？都有 哪些映射形式？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E6%89%B9%E9%87%8F%E6%8F%92%E5%85%A5%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">如何执行批量插入？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Xml%E6%98%A0%E5%B0%84%E6%96%87%E4%BB%B6%E4%B8%AD%EF%BC%8C%E9%99%A4%E4%BA%86%E5%B8%B8%E8%A7%81%E7%9A%84select-insert-updae-delete-%E6%A0%87%E7%AD%BE%E4%B9%8B%E5%A4%96%EF%BC%8C%E8%BF%98%E6%9C%89%E5%93%AA%E4%BA%9B%E6%A0%87%E7%AD%BE%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">Xml映射文件中，除了常见的select|insert|updae|delete 标签之外，还有哪些标签？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MyBatis%E5%AE%9E%E7%8E%B0%E4%B8%80%E5%AF%B9%E4%B8%80%E6%9C%89%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F-%E5%85%B7%E4%BD%93%E6%80%8E%E4%B9%88%E6%93%8D%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="nav-number">4.</span> <span class="nav-text">MyBatis实现一对一有几种方式?具体怎么操作的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mybatis%E6%98%AF%E5%90%A6%E6%94%AF%E6%8C%81%E5%BB%B6%E8%BF%9F%E5%8A%A0%E8%BD%BD%EF%BC%9F%E5%A6%82%E6%9E%9C%E6%94%AF%E6%8C%81%EF%BC%8C%E5%AE%83%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E6%98%AF%E4%BB%80-%E4%B9%88%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">Mybatis是否支持延迟加载？如果支持，它的实现原理是什 么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E8%AF%B4Mybatis%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6"><span class="nav-number">6.</span> <span class="nav-text">说说Mybatis的缓存机制:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JDBC-%E7%BC%96%E7%A8%8B%E6%9C%89%E5%93%AA%E4%BA%9B%E6%AD%A5%E9%AA%A4%EF%BC%9F"><span class="nav-number">7.</span> <span class="nav-text">JDBC 编程有哪些步骤？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MyBatis-%E4%B8%AD%E8%A7%81%E8%BF%87%E4%BB%80%E4%B9%88%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9F"><span class="nav-number">8.</span> <span class="nav-text">MyBatis 中见过什么设计模式？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MyBatis-%E4%B8%AD%E6%AF%94%E5%A6%82-UserMapper-java-%E6%98%AF%E6%8E%A5%E5%8F%A3%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88%E6%B2%A1%E6%9C%89%E5%AE%9E-%E7%8E%B0%E7%B1%BB%E8%BF%98%E8%83%BD%E8%B0%83%E7%94%A8%EF%BC%9F"><span class="nav-number">9.</span> <span class="nav-text">MyBatis 中比如 UserMapper.java 是接口，为什么没有实 现类还能调用？</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱佳祺</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
