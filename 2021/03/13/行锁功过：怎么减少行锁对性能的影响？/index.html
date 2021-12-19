@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="高级技术,mysql," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="xxx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="行锁功过：怎么减少行锁对性能的影响？">
+<meta property="og:url" content="http://example.com/2021/03/13/%E8%A1%8C%E9%94%81%E5%8A%9F%E8%BF%87%EF%BC%9A%E6%80%8E%E4%B9%88%E5%87%8F%E5%B0%91%E8%A1%8C%E9%94%81%E5%AF%B9%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D%EF%BC%9F/index.html">
+<meta property="og:site_name" content="zjqの博客">
+<meta property="og:description" content="xxx">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/image/%E8%A1%8C%E9%94%81%E5%8A%9F%E8%BF%87%EF%BC%9A%E6%80%8E%E4%B9%88%E5%87%8F%E5%B0%91%E8%A1%8C%E9%94%81%E5%AF%B9%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D%EF%BC%9F/7-1.JPG">
+<meta property="og:image" content="http://example.com/image/%E8%A1%8C%E9%94%81%E5%8A%9F%E8%BF%87%EF%BC%9A%E6%80%8E%E4%B9%88%E5%87%8F%E5%B0%91%E8%A1%8C%E9%94%81%E5%AF%B9%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D%EF%BC%9F/7-2.JPG">
+<meta property="article:published_time" content="2021-03-13T12:35:37.000Z">
+<meta property="article:modified_time" content="2021-12-19T06:43:17.259Z">
+<meta property="article:author" content="朱佳祺">
+<meta property="article:tag" content="高级技术">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/image/%E8%A1%8C%E9%94%81%E5%8A%9F%E8%BF%87%EF%BC%9A%E6%80%8E%E4%B9%88%E5%87%8F%E5%B0%91%E8%A1%8C%E9%94%81%E5%AF%B9%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D%EF%BC%9F/7-1.JPG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://example.com/2021/03/13/行锁功过：怎么减少行锁对性能的影响？/"/>
+
+
+
+
+
+  <title>行锁功过：怎么减少行锁对性能的影响？ | zjqの博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zjqの博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">zjq</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/13/%E8%A1%8C%E9%94%81%E5%8A%9F%E8%BF%87%EF%BC%9A%E6%80%8E%E4%B9%88%E5%87%8F%E5%B0%91%E8%A1%8C%E9%94%81%E5%AF%B9%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D%EF%BC%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zjqの博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">行锁功过：怎么减少行锁对性能的影响？</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-03-13T20:35:37+08:00">
+                2021-03-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  xxx
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>MySQL 的行锁是在引擎层由各个引擎自己实现的。但并不是所有的引擎都支持行锁，比<br>如 MyISAM 引擎就不支持行锁。不支持行锁意味着并发控制只能使用表锁，对于这种引<br>擎的表，同一张表上任何时刻只能有一个更新在执行，这就会影响到业务并发度。InnoDB<br>是支持行锁的，这也是 MyISAM 被 InnoDB 替代的重要原因之一。</p>
+<p>我们今天就主要来聊聊 InnoDB 的行锁，以及如何通过减少锁冲突来提升业务并发度。</p>
+<p>顾名思义，行锁就是针对数据表中行记录的锁。这很好理解，比如事务 A 更新了一行，而<br>这时候事务 B 也要更新同一行，则必须等事务 A 的操作完成后才能进行更新。</p>
+<p>当然，数据库中还有一些没那么一目了然的概念和设计，这些概念如果理解和使用不当，<br>容易导致程序出现非预期行为，比如两阶段锁。</p>
+<h2 id="从两阶段锁说起"><a href="#从两阶段锁说起" class="headerlink" title="从两阶段锁说起"></a>从两阶段锁说起</h2><p>举个例子。在下面的操作序列中，事务 B 的 update 语句执行时会是什么现象<br>呢？假设字段 id 是表 t 的主键。</p>
+<p><img src="/image/%E8%A1%8C%E9%94%81%E5%8A%9F%E8%BF%87%EF%BC%9A%E6%80%8E%E4%B9%88%E5%87%8F%E5%B0%91%E8%A1%8C%E9%94%81%E5%AF%B9%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D%EF%BC%9F/7-1.JPG" alt="7-1"></p>
+<p>这个问题的结论取决于事务 A 在执行完两条 update 语句后，持有哪些锁，以及在什么时<br>候释放。你可以验证一下：实际上事务 B 的 update 语句会被阻塞，直到事务 A 执行<br>commit 之后，事务 B 才能继续执行。</p>
+<p>知道了这个答案，你一定知道了事务 A 持有的两个记录的行锁，都是在 commit 的时候才<br>释放的。</p>
+<p>也就是说，<strong>在 InnoDB 事务中，行锁是在需要的时候才加上的，但并不是不需要了就立刻</strong><br><strong>释放，而是要等到事务结束时才释放。这个就是两阶段锁协议。</strong></p>
+<p>知道了这个设定，对我们使用事务有什么帮助呢？那就是，如<em>果你的事务中需要锁多个</em><br><em>行，要把最可能造成锁冲突、最可能影响并发度的锁尽量往后放。</em></p>
+<p>我给你举个例子。</p>
+<p>假设你负责实现一个电影票在线交易业务，顾客 A 要在影院 B 购买电影票。我们简化一<br>点，这个业务需要涉及到以下操作：</p>
+<ol>
+<li><p>从顾客 A 账户余额中扣除电影票价；</p>
+</li>
+<li><p>给影院 B 的账户余额增加这张电影票价；</p>
+</li>
+<li><p>记录一条交易日志。</p>
+</li>
+</ol>
+<p>  也就是说，要完成这个交易，我们需要 update 两条记录，并 insert 一条记录。当然，为<br>  了保证交易的原子性，我们要把这三个操作放在一个事务中。那么，你会怎样安排这三个<br>  语句在事务中的顺序呢？</p>
+<p>  试想如果同时有另外一个顾客 C 要在影院 B 买票，那么这两个事务冲突的部分就是语句 2<br>  了。因为它们要更新同一个影院账户的余额，需要修改同一行数据。</p>
+<p>  根据两阶段锁协议，不论你怎样安排语句顺序，所有的操作需要的行锁都是在事务提交的<br>  时候才释放的。所以，如果你把语句 2 安排在最后，比如按照 3、1、2 这样的顺序，</p>
+<p>  那么<br>  影院账户余额这一行的锁时间就最少。这就最大程度地减少了事务之间的锁等待，提升了<br>  并发度。</p>
+<p>  好了，现在由于你的正确设计，影院余额这一行的行锁在一个事务中不会停留很长时间。<br>  但是，这并没有完全解决你的困扰。</p>
+<p>  如果这个影院做活动，可以低价预售一年内所有的电影票，而且这个活动只做一天。于是<br>  在活动时间开始的时候，你的 MySQL 就挂了。你登上服务器一看，CPU 消耗接近<br>  100%，但整个数据库每秒就执行不到 100 个事务。这是什么原因呢？</p>
+<p>  这里，我就要说到死锁和死锁检测了。</p>
+<h2 id="死锁和死锁检测"><a href="#死锁和死锁检测" class="headerlink" title="死锁和死锁检测"></a>死锁和死锁检测</h2><p>  当并发系统中不同线程出现循环资源依赖，涉及的线程都在等待别的线程释放资源时，就<br>  会导致这几个线程都进入无限等待的状态，称为死锁。这里我用数据库中的行锁举个例<br>  子。</p>
+<p><img src="/image/%E8%A1%8C%E9%94%81%E5%8A%9F%E8%BF%87%EF%BC%9A%E6%80%8E%E4%B9%88%E5%87%8F%E5%B0%91%E8%A1%8C%E9%94%81%E5%AF%B9%E6%80%A7%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D%EF%BC%9F/7-2.JPG" alt="7-2"></p>
+<p>  这时候，事务 A 在等待事务 B 释放 id=2 的行锁，而事务 B 在等待事务 A 释放 id=1 的<br>  行锁。 事务 A 和事务 B 在互相等待对方的资源释放，就是进入了死锁状态。当出现死锁<br>  以后，有两种策略：</p>
+<ul>
+<li><p><em>一种策略是，直接进入等待，直到超时。这个超时时间可以通过参数</em><br>  <em>innodb_lock_wait_timeout 来设置。</em></p>
+</li>
+<li><p><em>另一种策略是，发起死锁检测，发现死锁后，主动回滚死锁链条中的某一个事务，让其</em><br>  <em>他事务得以继续执行。将参数 innodb_deadlock_detect 设置为 on，表示开启这个逻</em><br>  <em>辑。</em></p>
+</li>
+</ul>
+<p>  在 InnoDB 中，innodb_lock_wait_timeout 的默认值是 50s，意味着如果采用第一个策<br>  略，当出现死锁以后，第一个被锁住的线程要过 50s 才会超时退出，然后其他线程才有可<br>  能继续执行。对于在线服务来说，这个等待时间往往是无法接受的。</p>
+<p>  但是，我们又不可能直接把这个时间设置成一个很小的值，比如 1s。这样当出现死锁的时<br>  候，确实很快就可以解开，但如果不是死锁，而是简单的锁等待呢？所以，超时时间设置<br>  太短的话，会出现很多误伤。</p>
+<p>  所以，正常情况下我们还是要采用第二种策略，即：主动死锁检测，而且<br>  innodb_deadlock_detect 的默认值本身就是 on。主动死锁检测在发生死锁的时候，是<br>  能够快速发现并进行处理的，但是它也是有额外负担的。</p>
+<p>  你可以想象一下这个过程：每当一个事务被锁的时候，就要看看它所依赖的线程有没有被<br>  别人锁住，如此循环，最后判断是否出现了循环等待，也就是死锁。</p>
+<p>  那如果是我们上面说到的所有事务都要更新同一行的场景呢？</p>
+<p>  每个新来的被堵住的线程，都要判断会不会由于自己的加入导致了死锁，这是一个时间复<br>  杂度是 O(n) 的操作。假设有 1000 个并发线程要同时更新同一行，那么死锁检测操作就<br>  是 100 万这个量级的。虽然最终检测的结果是没有死锁，但是这期间要消耗大量的 CPU<br>  资源。因此，你就会看到 CPU 利用率很高，但是每秒却执行不了几个事务。</p>
+<p>  根据上面的分析，我们来讨论一下，<em>怎么解决由这种热点行更新导致的性能问题呢</em>？问题<br>  的症结在于，死锁检测要耗费大量的 CPU 资源。</p>
+<p>  <strong>一种头痛医头的方法，就是如果你能确保这个业务一定不会出现死锁，可以临时把死锁检</strong><br>  <strong>测关掉</strong>。但是这种操作本身带有一定的风险，因为业务设计的时候一般不会把死锁当做一<br>  个严重错误，毕竟出现死锁了，就回滚，然后通过业务重试一般就没问题了，这是业务无<br>  损的。而关掉死锁检测意味着可能会出现大量的超时，这是业务有损的。</p>
+<p>  <strong>另一个思路是控制并发度</strong>。根据上面的分析，你会发现如果并发能够控制住，比如同一行<br>  同时最多只有 10 个线程在更新，那么死锁检测的成本很低，就不会出现这个问题。一个<br>  直接的想法就是，在客户端做并发控制。但是，你会很快发现这个方法不太可行，因为客<br>  户端很多。我见过一个应用，有 600 个客户端，这样即使每个客户端控制到只有 5 个并发<br>  线程，汇总到数据库服务端以后，峰值并发数也可能要达到 3000。</p>
+<p>  因此，这个并发控制要做在数据库服务端。如果你有中间件，可以考虑在中间件实现；如<br>  果你的团队有能修改 MySQL 源码的人，也可以做在 MySQL 里面。基本思路就是，对于<br>  相同行的更新，在进入引擎之前排队。这样在 InnoDB 内部就不会有大量的死锁检测工作<br>  了。</p>
+<p>  可能你会问，<strong>如果团队里暂时没有数据库方面的专家，不能实现这样的方案，能不能从设</strong><br>  <strong>计上优化这个问题呢？</strong></p>
+<p>  你可以考虑通过将一行改成逻辑上的多行来减少锁冲突。还是以影院账户为例，可以考虑<br>  放在多条记录上，比如 10 个记录，影院的账户总额等于这 10 个记录的值的总和。这样每<br>  次要给影院账户加金额的时候，随机选其中一条记录来加。这样每次冲突概率变成原来的<br>  1/10，可以减少锁等待个数，也就减少了死锁检测的 CPU 消耗。</p>
+<p>  这个方案看上去是无损的，但其实这类方案需要根据业务逻辑做详细设计。如果账户余额<br>  可能会减少，比如退票逻辑，那么这时候就需要考虑当一部分行记录变成 0 的时候，代码<br>  要有特殊处理。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>  介绍了 MySQL 的行锁，涉及了两阶段锁协议、死锁和死锁检测这两大部分内容。</p>
+<p>  其中，我以两阶段协议为起点，和你一起讨论了在开发的时候如何安排正确的事务语句。<br>  这里的原则 / 我给你的建议是：如果你的事务中需要锁多个行，要把最可能造成锁冲突、<br>  最可能影响并发度的锁的申请时机尽量往后放。</p>
+<p>  但是，调整语句顺序并不能完全避免死锁。所以我们引入了死锁和死锁检测的概念，以及<br>  提供了三个方案，来减少死锁对数据库的影响。减少死锁的主要方向，就是控制访问相同<br>  资源的并发事务量。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E9%AB%98%E7%BA%A7%E6%8A%80%E6%9C%AF/" rel="tag"># 高级技术</a>
+          
+            <a href="/tags/mysql/" rel="tag"># mysql</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/01/22/%E5%85%A8%E5%B1%80%E9%94%81%E5%92%8C%E8%A1%A8%E9%94%81%EF%BC%9A%E7%BB%99%E8%A1%A8%E5%8A%A0%E4%B8%AA%E5%AD%97%E6%AE%B5%E6%80%8E%E4%B9%88%E6%9C%89%E8%BF%99%E4%B9%88%E5%A4%9A%E9%98%BB%E7%A2%8D/" rel="next" title="全局锁和表锁：给表加个字段怎么有这么多阻碍？">
+                <i class="fa fa-chevron-left"></i> 全局锁和表锁：给表加个字段怎么有这么多阻碍？
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/04/07/MyBatis/" rel="prev" title="MyBatis">
+                MyBatis <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E4%B8%A4%E9%98%B6%E6%AE%B5%E9%94%81%E8%AF%B4%E8%B5%B7"><span class="nav-number">1.</span> <span class="nav-text">从两阶段锁说起</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E5%92%8C%E6%AD%BB%E9%94%81%E6%A3%80%E6%B5%8B"><span class="nav-number">2.</span> <span class="nav-text">死锁和死锁检测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱佳祺</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" target="_blank" rel="noopener" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" target="_blank" rel="noopener" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
